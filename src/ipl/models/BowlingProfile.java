@@ -1,6 +1,8 @@
 package ipl.models;
 
+import ipl.models.enums.BattingHand;
 import ipl.models.enums.BowlerType;
+import ipl.models.enums.BowlingHand;
 
 public class BowlingProfile {
     private final double economy;

@@ -5,7 +5,7 @@ import ipl.models.enums.Role;
 import java.util.Objects;
 
 public class Player implements Comparable<Player> {
-    private final int id;
+    private final String id;
     private final String name;
     private final int age;
     private final String nationality;
@@ -19,11 +19,11 @@ public class Player implements Comparable<Player> {
 
     @Override
     public String toString() {
-        return String.format("[#%d] %s | %s | OVR %d | %s",
+        return String.format("[%s] %s | %s | OVR %d | %s",
                 id, name, role, overall, formatPrice(basePriceLakhs));
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -67,7 +67,7 @@ public class Player implements Comparable<Player> {
         return overall;
     }
 
-    public Player(int id, String name, int age, String nationality, boolean overseas, Role role, long basePriceLakhs, BattingProfile batting, BowlingProfile bowling, int fielding, int overall) {
+    public Player(String id, String name, int age, String nationality, boolean overseas, Role role, long basePriceLakhs, BattingProfile batting, BowlingProfile bowling, int fielding, int overall) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -95,7 +95,7 @@ public class Player implements Comparable<Player> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Player player = (Player) o;
-        return id == player.id;
+        return Objects.equals(id, player.id);
     }
 
     @Override
@@ -105,6 +105,10 @@ public class Player implements Comparable<Player> {
 
     @Override
     public int compareTo(Player others) {
-        return Integer.compare(others.overall, this.overall);
+        int c = Integer.compare(others.overall, this.overall);
+        if (c != 0) {
+            return c;
+        }
+        return this.id.compareTo(others.id);
     }
 }

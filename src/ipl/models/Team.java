@@ -2,6 +2,7 @@ package ipl.models;
 
 import ipl.models.enums.Role;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,16 +13,16 @@ public class Team {
     private long currentBudgetLakhs;
     private final List<Player> squad;
 
-    private final int MIN_SQUAD_SIZE = 18;
-    private final int MAX_SQUAD_SIZE = 25;
-    private final int MAX_OVERSEAS_PLAYER = 8;
+    private static final int MIN_SQUAD_SIZE = 18;
+    private static final int MAX_SQUAD_SIZE = 25;
+    private static final int MAX_OVERSEAS_PLAYER = 8;
 
     public Team(String name, String shortName, long initialBudgetLakhs,long currentBudgetLakhs, List<Player> squad) {
         this.name = name;
         this.shortName = shortName;
         this.initialBudgetLakhs = initialBudgetLakhs;
         this.currentBudgetLakhs = currentBudgetLakhs;
-        this.squad = squad;
+        this.squad = new ArrayList<>(squad);
     }
 
     public Team(String name, String shortName, long initialBudgetLakhs, List<Player> squad) {
@@ -29,15 +30,23 @@ public class Team {
         this.shortName = shortName;
         this.initialBudgetLakhs = initialBudgetLakhs;
         this.currentBudgetLakhs = initialBudgetLakhs;
-        this.squad = squad;
+        this.squad = new ArrayList<>(squad);
     }
 
     public boolean canAdd(long price, Player p) {
-        if (
-                (p.isOverseas() && overseasCount() >= MAX_OVERSEAS_PLAYER)
-                        || (this.squad.size() >= this.MAX_SQUAD_SIZE)
-                        || (price > currentBudgetLakhs)
-        ) {
+        if (p == null || squad.contains(p)) {
+            return false;
+        }
+
+        if (p.isOverseas() && overseasCount() >= MAX_OVERSEAS_PLAYER) {
+            return false;
+        }
+
+        if (this.squad.size() >= this.MAX_SQUAD_SIZE) {
+            return false;
+        }
+
+        if (price > currentBudgetLakhs) {
             return false;
         }
 
@@ -51,7 +60,7 @@ public class Team {
         return true;
     }
 
-    private int overseasCount() {
+    public int overseasCount() {
         int counter = 0;
         for (Player p : squad) {
             if (p.isOverseas()) {
@@ -81,6 +90,10 @@ public class Team {
         }
         squad.add(p);
         this.currentBudgetLakhs -= price;
+    }
+
+    public void addToSquadUnchecked(Player p) {
+        squad.add(p);
     }
 
     public long totalSpent(){

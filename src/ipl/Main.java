@@ -1,13 +1,40 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-void main() {
-    //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-    // to see how IntelliJ IDEA suggests fixing it.
-    IO.println(String.format("Hello and welcome!"));
+package ipl;
 
-    for (int i = 1; i <= 5; i++) {
-        //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-        // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-        IO.println("i = " + i);
+import ipl.models.Player;
+import ipl.models.Team;
+import ipl.persistence.PlayerRepository;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class Main {
+    public static void main(String[] args) {
+        List<Team> teams = PlayerRepository.loadTeams();
+
+        List<Player> all = new ArrayList<>();
+        for (Team t : teams) {
+            all.addAll(t.getSquad());
+        }
+        System.out.println("Total players: " + all.size());
+
+        Collections.sort(all); // Player.compareTo: overall বেশি আগে
+
+        System.out.println("--- Top 10 ---");
+        for (int i = 0; i < 10 && i < all.size(); i++) {
+            System.out.println(all.get(i));
+        }
+
+        System.out.println("--- Bottom 3 ---");
+        for (int i = all.size() - 3; i < all.size(); i++) {
+            System.out.println(all.get(i));
+        }
+
+        System.out.println("--- Teams ---");
+        for (Team t : teams) {
+            System.out.println(t.getShortName()
+                    + " squad=" + t.getSquad().size()
+                    + " overseas=" + t.overseasCount());
+        }
     }
 }
