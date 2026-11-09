@@ -7,38 +7,35 @@ import java.util.List;
 import java.util.Random;
 
 public class MatchSimulator {
-    public static MatchResult play(Team teamA,Team teamB, Random random){
-        Team tossWon;
 
-        if (random.nextDouble() < 0.5) {
-            tossWon = teamA;
-        } else {
-            tossWon = teamB;
-        }
+    public static MatchResult play(Team teamA, Team teamB, Random random) {
+        Team firstTeam = random.nextBoolean() ? teamA : teamB;
+        Team secondTeam = (firstTeam == teamA) ? teamB : teamA;
 
-        Team firstTeam = tossWon;
-        Team secondTeam = (firstTeam==teamA) ? teamB : teamA;
+        List<Player> firstXI = XiSelector.pickXi(firstTeam);
+        List<Player> secondXI = XiSelector.pickXi(secondTeam);
 
-        List<Player> firstTeamXi = XiSelector.pickXi(firstTeam);
-        List<Player> secondTeamXi = XiSelector.pickXi(secondTeam);
-
-        Innings first = new Innings(firstTeam.getShortName(), firstTeamXi, XiSelector.bowlingAttack(secondTeamXi), secondTeamXi, 0, random);
+        Innings first = new Innings(firstTeam.getShortName(), firstXI,
+                XiSelector.bowlingAttack(secondXI), secondXI, 0, random);
         first.play();
 
-        int target = first.getRuns()+1;
-
-        Innings second = new Innings(secondTeam.getShortName(), secondTeamXi, XiSelector.bowlingAttack(firstTeamXi), firstTeamXi, target, random);
+        int target = first.getRuns() + 1;
+        Innings second = new Innings(secondTeam.getShortName(), secondXI,
+                XiSelector.bowlingAttack(firstXI), firstXI, target, random);
         second.play();
 
         String summary;
-
+        Team winner;
         if (second.getRuns() >= target) {
+            winner = secondTeam;
             summary = secondTeam.getName() + " won by " + (10 - second.getWickets()) + " wickets";
         } else if (second.getRuns() == first.getRuns()) {
+            winner = null;
             summary = "Match tied";
         } else {
+            winner = firstTeam;
             summary = firstTeam.getName() + " won by " + (first.getRuns() - second.getRuns()) + " runs";
         }
-        return new MatchResult(first,second, summary);
+        return new MatchResult(firstTeam, secondTeam, first, second, winner, summary);
     }
 }
