@@ -78,6 +78,7 @@ public class Innings {
         Phase phase = Phase.ofOver(over);
         BowlerFigures figures = bowlerFigures.computeIfAbsent(currentBowler, BowlerFigures::new);
         Player batsman = battingOrder.get(striker);
+        Player partner = battingOrder.get(nonStriker);
         BatsmanScore score = batsmanScore.get(batsman);
 
         double[] cumulative = ProbabilityModel.cumulative(batsman, currentBowler, phase);
@@ -117,7 +118,7 @@ public class Innings {
             }
         }
 
-        balls.add(new Ball(over, legalInOver, batsman, currentBowler, outcome, wicketType));
+        balls.add(new Ball(over, legalInOver, batsman, partner, currentBowler, outcome, wicketType));
 
         if(legalInOver == 6){
             endOver();
