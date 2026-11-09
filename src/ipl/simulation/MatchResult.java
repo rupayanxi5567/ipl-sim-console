@@ -46,4 +46,15 @@ public class MatchResult {
     public String getSummary() {
         return summary;
     }
+
+    public Team getLoser(){
+        if(winner == null){
+            return null;
+        }
+        return (firstTeam==winner) ? secondTeam : firstTeam;
+    }
+
+    public boolean wasSuperOver(){
+        return winner != null && first.getRuns() == second.getRuns();
+    }
 }

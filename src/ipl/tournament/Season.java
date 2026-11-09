@@ -73,4 +73,17 @@ public class Season {
     public PointsTable getTable() {
         return table;
     }
+
+    public PlayoffManager startPlayoffs(){
+        if (hasNextMatch()) {
+            throw new IllegalStateException("League stage is not finished");
+        }
+        List<TeamRecord> standings = table.standings();
+        List<Team> topFour = new ArrayList<>();
+        for(int i=0;i<4;i++){
+            topFour.add(standings.get(i).getTeam());
+        }
+        return new PlayoffManager(topFour, random);
+    }
+
 }

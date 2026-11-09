@@ -6,8 +6,9 @@ import ipl.models.enums.Role;
 import java.util.*;
 
 public class Innings {
-    private static final int MAX_LEGAL_BALLS = 120;
     private static final int MAX_BALLS_PER_BOWLER = 24;
+    private static final int DEFAULT_MAX_BALLS = 120;
+    private static final int DEFAULT_MAX_WICKETS = 10;
 
     private final String battingTeamName;
     private final List<Player> battingOrder;
@@ -16,6 +17,8 @@ public class Innings {
     private final Player keeper;
     private final int target;
     private final Random random;
+    private final int maxBalls;
+    private final int maxWickets;
 
     private final List<Ball> balls = new ArrayList<>();
     private final Map<Player, BatsmanScore> batsmanScore = new LinkedHashMap<>();
@@ -36,6 +39,11 @@ public class Innings {
     private Player lastBowler;
 
     public Innings(String battingTeamName, List<Player> battingOrder, List<Player> bowlingAttack, List<Player> fieldingXI, int target, Random random) {
+        this(battingTeamName, battingOrder, bowlingAttack, fieldingXI, target, random,
+                DEFAULT_MAX_BALLS, DEFAULT_MAX_WICKETS);
+    }
+
+    public Innings(String battingTeamName, List<Player> battingOrder, List<Player> bowlingAttack, List<Player> fieldingXI, int target, Random random, int maxBalls, int maxWickets) {
         this.battingTeamName = battingTeamName;
         this.battingOrder = battingOrder;
         this.bowlingAttack = bowlingAttack;
@@ -43,6 +51,8 @@ public class Innings {
         this.keeper = findKeeper();
         this.target = target;
         this.random = random;
+        this.maxBalls = maxBalls;
+        this.maxWickets = maxWickets;
 
         for (Player p : battingOrder) {
             batsmanScore.put(p, new BatsmanScore(p));
@@ -52,10 +62,10 @@ public class Innings {
     }
 
     public boolean isFinished() {
-        if (legalBalls >= MAX_LEGAL_BALLS) {
+        if (legalBalls >= maxBalls) {
             return true;
         }
-        if (wickets >= 10) {
+        if (wickets >= maxWickets) {
             return true;
         }
         return target > 0 && runs >= target;
@@ -82,7 +92,6 @@ public class Innings {
         BatsmanScore score = batsmanScore.get(batsman);
 
         double[] cumulative = ProbabilityModel.cumulative(batsman, currentBowler, phase);
-
         Outcome outcome = ProbabilityModel.pick(cumulative,random.nextDouble());
         int r = outcome.getRuns();
 
@@ -106,7 +115,7 @@ public class Innings {
             if(wicketType.isCreditedToBowler()){
                 figures.addWicket();
             }
-            if(wickets < 10){
+            if(wickets < maxWickets){
                 striker=nextBatsman;
                 nextBatsman++;
                 batsmanScore.get(battingOrder.get(striker)).setBatted(true);
