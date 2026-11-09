@@ -21,13 +21,8 @@ public class Main {
         Collections.sort(all); // Player.compareTo: overall বেশি আগে
 
         System.out.println("--- Top 10 ---");
-        for (int i = 0; i < 10 && i < all.size(); i++) {
-            System.out.println(all.get(i));
-        }
-
-        System.out.println("--- Bottom 3 ---");
-        for (int i = all.size() - 3; i < all.size(); i++) {
-            System.out.println(all.get(i));
+        for (int i = 0; i < all.size(); i++) {
+            System.out.println((i + 1) + ". " + all.get(i));
         }
 
         System.out.println("--- Teams ---");
